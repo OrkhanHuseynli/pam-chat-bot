@@ -13,7 +13,7 @@ export function MainPageComponent() {
         </div>
         <div className='justify-center align-center items-center flex flex-row gap-2'>
         <MainPageButton title="Regular Chat" description='Standard AI Chat' path='chat'/>
-        <MainPageButton title="Chat with RAG" description='AI Chat with integrated RAG' path='rag'/>
+        <MainPageButton title="RAG Chatbot" description='AI Chat with integrated RAG' path='rag'/>
         <MainPageButton title="Vector search" description='Test the vector data used for RAG' path='search'/>
         </div>
   </div>

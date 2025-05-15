@@ -8,7 +8,7 @@ import {
   CommandItem,
 } from "@/components/ui/Command";
 import { useRef, useState } from "react";
-import { IEmbeddedEntity } from "@/lib/db/seedData";
+import type { IEmbeddedEntity } from "@/lib/db/models";
 import { SearchDataTable } from "./ui/DataTable/SearchDataTable";
 import { AddButton } from "./ui/AddButton";
 
@@ -26,7 +26,6 @@ export function debounce(func: Function, delay: number) {
 }
 
 export type selectedType = Map<string, IEmbeddedEntity>;
-type selectedTypeMap = Map<string, selectedType>;
 
 export default function Search() {
   const [data, setData] = useState<IEmbeddedEntity[]>([]);

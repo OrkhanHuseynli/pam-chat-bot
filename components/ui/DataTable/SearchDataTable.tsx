@@ -3,10 +3,10 @@
 import * as React from "react";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "../Table";
 import { Info } from "lucide-react";
-import { IEmbeddedEntity, IMetadata } from "@/lib/db/seedData";
+import type { IEmbeddedEntity, IMetadata } from "@/lib/db/models";
 import Image from "next/image";
 export type selectedType = Map<string, IEmbeddedEntity>;
 export type setSelectedType = (m: selectedType) => void;

@@ -47,7 +47,7 @@ pnpm seed
 
 ### Customizing Seed Data
 
-You can replace the [seed data](./lib/db/seedData.ts) with your own content. Just ensure that your data conforms to the [IEmbeddedEntity](./lib/db/seedData.ts) interface. This way, no UI changes will be required when using your custom data.
+You can replace the [seed data](./lib/db/seedData.ts) with your own content. Just ensure that your data conforms to the [IEmbeddedEntity](./lib/db/models.ts) interface. This way, no UI changes will be required when using your custom data.
 
 ### Run the app locally
 

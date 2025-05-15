@@ -3,7 +3,8 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { embeddedItems } from "./schema";
 import { generateUUID } from "../utils";
-import { IEmbeddedEntity, seedData, IMetadata } from "./seedData";
+import type { IEmbeddedEntity, IMetadata } from "./models";
+import { seedData } from "./seedData";
 import { createOpenAI } from "@ai-sdk/openai";
 import { embedMany } from "ai";
 config({
@@ -37,7 +38,7 @@ async function embedManyWithMetadata(
     id: generateUUID(),
     name: metas[i].name || "no name provided",
     shortDescription:
-    metas[i].shortDescription || "no short description provided",
+      metas[i].shortDescription || "no short description provided",
     metadata: jsons[i],
     embedding,
   }));

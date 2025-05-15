@@ -1,8 +1,8 @@
 import { embed, embedMany } from "ai";
 import { openai } from "./providers";
-import { IMetadata, IEmbeddedEntity } from "../db/seedData";
+import type { IMetadata, IEmbeddedEntity } from "../db/models";
 import { searchEntitiesByVector } from "../db/queries";
-import { EmbeddedData } from "../db/schema";
+import type { EmbeddedData } from "../db/schema";
 
 const embeddingModel = openai.embedding("text-embedding-3-large");
 

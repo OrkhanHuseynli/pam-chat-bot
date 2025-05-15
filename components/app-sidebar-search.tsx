@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import type { User } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import type { User } from "next-auth";
+import { useRouter } from "next/navigation";
 
-import { PlusIcon } from '@/components/icons';
-import { SidebarHistory } from '@/components/sidebar-history';
-import { SidebarUserNav } from '@/components/sidebar-user-nav';
-import { Button } from '@/components/ui/button';
+import { PlusIcon } from "@/components/icons";
+import { SidebarHistory } from "@/components/sidebar-history";
+import { SidebarUserNav } from "@/components/sidebar-user-nav";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -14,12 +14,18 @@ import {
   SidebarHeader,
   SidebarMenu,
   useSidebar,
-} from '@/components/ui/sidebar';
-import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react';
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
-export function AppSidebarSearch({ user, chatType = 'chat' }: { user: User | undefined, chatType?: string }) {
+export function AppSidebarSearch({
+  user,
+  chatType = "chat",
+}: {
+  user: User | undefined;
+  chatType?: string;
+}) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
 
@@ -36,7 +42,7 @@ export function AppSidebarSearch({ user, chatType = 'chat' }: { user: User | und
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer text-blue-500 dark:text-white">
-                PAM Chatbot
+                PAM Vector Search
               </span>
             </Link>
             <Tooltip>
@@ -47,7 +53,7 @@ export function AppSidebarSearch({ user, chatType = 'chat' }: { user: User | und
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push("/");
                     router.refresh();
                   }}
                 >
@@ -60,29 +66,34 @@ export function AppSidebarSearch({ user, chatType = 'chat' }: { user: User | und
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarLinks/>
+        <SidebarLinks />
       </SidebarContent>
       <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
     </Sidebar>
   );
 }
 
-
-function SidebarLinks(){
-  return <div className="flex flex-col gap-2 px-5 mt-6">
-    <Link
-    href="/chat"
-    >
-      <div className='group/links flex flex-row text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer text-zinc-800 dark:text-white'>
-     <ArrowLeftIcon strokeWidth={0.9}  className='ml-4 group-hover/links:ml-1 group-hover/links:text-blue-500'/>  <span className='ml-1 group-hover/links:ml-2'> 
-      AI Chat</span>
-    </div></Link>
-    <Link
-    href="/rag"
-    >
-      <div className='group/links flex flex-row text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer text-zinc-800 dark:text-white'>
-     <ArrowLeftIcon strokeWidth={0.9}  className='ml-4 group-hover/links:ml-1 group-hover/links:text-blue-500'/>  <span className='ml-1 group-hover/links:ml-2'> 
-      AI Chat with RAG</span>
-    </div></Link>
-</div>
+function SidebarLinks() {
+  return (
+    <div className="flex flex-col gap-2 px-5 mt-6">
+      <Link href="/chat">
+        <div className="group/links flex flex-row text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer text-zinc-800 dark:text-white">
+          <ArrowLeftIcon
+            strokeWidth={0.9}
+            className="ml-4 group-hover/links:ml-1 group-hover/links:text-blue-500"
+          />{" "}
+          <span className="ml-1 group-hover/links:ml-2">AI Chat</span>
+        </div>
+      </Link>
+      <Link href="/rag">
+        <div className="group/links flex flex-row text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer text-zinc-800 dark:text-white">
+          <ArrowLeftIcon
+            strokeWidth={0.9}
+            className="ml-4 group-hover/links:ml-1 group-hover/links:text-blue-500"
+          />{" "}
+          <span className="ml-1 group-hover/links:ml-2">AI Chat with RAG</span>
+        </div>
+      </Link>
+    </div>
+  );
 }

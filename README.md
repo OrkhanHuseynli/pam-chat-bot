@@ -1,16 +1,15 @@
 <a href="https://chat.vercel.ai/">
-  <!-- <img alt="Next.js + RAG + AI chatbot." src="app/(chat)/opengraph-image.png"> -->
-  <h1 align="center">PAM Chat bot</h1>
+  <img alt="Next.js + RAG + AI chatbot." src="docs/main_page.png">
+  <h1 align="center">PAM AI Chat bot</h1>
 </a>
 
 <p align="center">
    This template is based on NextJS Chat SDK, a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
-   This template adds RAG example along with Vector Search page on top of the original NextJs demo. 
+   This template adds RAG example along with Vector Search page on top of the original NextJs demo.
 </p>
 
 <p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
+  <a href="https://chat-sdk.dev"><strong>Original Chat SDK Docs</strong></a> ·
   <a href="#running-locally"><strong>Running locally</strong></a>
 </p>
 <br/>

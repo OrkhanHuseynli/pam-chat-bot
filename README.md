@@ -1,5 +1,5 @@
 <a href="https://chat.vercel.ai/">
-  <img alt="Next.js + RAG + AI chatbot." src="app/(chat)/opengraph-image.png">
+  <!-- <img alt="Next.js + RAG + AI chatbot." src="app/(chat)/opengraph-image.png"> -->
   <h1 align="center">PAM Chat bot</h1>
 </a>
 
@@ -38,12 +38,17 @@ pnpm db:migrate
 
 You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. Put your env variables to `.env.local`.
 
+### Seed data
 
-### Seed data 
 This is data is necessary for the RAG example and Vector Search
+
 ```bash
 pnpm seed
 ```
+
+### Customizing Seed Data
+
+You can replace the [seed data](./lib/db/seedDb.ts) with your own content. Just ensure that your data conforms to the [IEmbeddedEntity](./lib/db/seedData.ts) interface. This way, no UI changes will be required when using your custom data.
 
 ### Run the app locally
 
@@ -52,8 +57,6 @@ pnpm dev
 ```
 
 Your app template should now be running on [localhost:3000](http://localhost:3000).
-
-
 
 ### Reference docs for the tech stack
 

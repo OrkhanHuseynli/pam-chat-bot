@@ -7,7 +7,9 @@ export default function Page() {
       <div className="text-lg text-muted-foreground">
         This is a placeholder for the search page.
       </div>
-      <div className="max-w-[1600px] min-w-[390px] w-[80%]"><Search/></div>
+      <div className="max-w-[1600px] min-w-[390px] w-4/5">
+        <Search />
+      </div>
     </div>
   );
 }

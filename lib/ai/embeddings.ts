@@ -1,7 +1,8 @@
 import { embed, embedMany } from "ai";
-import {openai } from "./providers";
-import { Dinosaur, DinosaurEntity } from "../db/seedData";
-import { searchDinosByVector } from "../db/queries";
+import { openai } from "./providers";
+import { IMetadata, IEmbeddedEntity } from "../db/seedData";
+import { searchEntitiesByVector } from "../db/queries";
+import { EmbeddedData } from "../db/schema";
 
 const embeddingModel = openai.embedding("text-embedding-3-large");
 
@@ -12,44 +13,51 @@ const generateChunks = (input: string): string[] => {
     .filter((i) => i !== "");
 };
 
-export async function embedDino(dino: Dinosaur):Promise<number[]> {
-    const json = JSON.stringify(dino);
-    const { embedding } = await embed({
-        model: embeddingModel,
-        value: json,
-      });
+export async function embedDino(dino: IMetadata): Promise<number[]> {
+  const json = JSON.stringify(dino);
+  const { embedding } = await embed({
+    model: embeddingModel,
+    value: json,
+  });
   return embedding;
 }
-export async function embedManyDino(dinos: Dinosaur[]):Promise<number[][]> {
-    const jsons = dinos.map((dino) => JSON.stringify(dino));
-    const { embeddings } = await embedMany({
-        model: embeddingModel,
-        values: jsons,
-      });
+export async function embedManyDino(dinos: IMetadata[]): Promise<number[][]> {
+  const jsons = dinos.map((dino) => JSON.stringify(dino));
+  const { embeddings } = await embedMany({
+    model: embeddingModel,
+    values: jsons,
+  });
   return embeddings;
 }
 
-export async function embedDinoWithMetadata(dino: Dinosaur):Promise<DinosaurEntity> {
-    const json = JSON.stringify(dino);
-    const { embedding } = await embed({
-        model: embeddingModel,
-        value: json,
-      });
-  return {embedding, ...dino, id: dino.name};
+export async function embedDinoWithMetadata(
+  dino: IMetadata
+): Promise<IEmbeddedEntity> {
+  const json = JSON.stringify(dino);
+  const { embedding } = await embed({
+    model: embeddingModel,
+    value: json,
+  });
+  return { embedding, ...dino, id: dino.name };
 }
 
-export async function embedManyDinoWithMetadata(dinos: Dinosaur[]):Promise<DinosaurEntity[]> {
-    const jsons = dinos.map((dino) => JSON.stringify(dino));
-    const { embeddings } = await embedMany({
-        model: embeddingModel,
-        values: jsons,
-        });
-    return embeddings.map((embedding, i) => ({...dinos[i], id: dinos[i].name, embedding}));
+export async function embedManyDinoWithMetadata(
+  dinos: IMetadata[]
+): Promise<IEmbeddedEntity[]> {
+  const jsons = dinos.map((dino) => JSON.stringify(dino));
+  const { embeddings } = await embedMany({
+    model: embeddingModel,
+    values: jsons,
+  });
+  return embeddings.map((embedding, i) => ({
+    ...dinos[i],
+    id: dinos[i].name,
+    embedding,
+  }));
 }
-
 
 export const generateEmbeddings = async (
-  value: string,
+  value: string
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
@@ -69,16 +77,17 @@ export const generateEmbedding = async (value: string): Promise<number[]> => {
 };
 
 export const findRelevantContent = async (userQuery: string) => {
-
-  let searchResult:any = [];
+  let searchResult: any = [];
   try {
-   searchResult = await searchDinosByVector(userQuery, 10)
-  }
-  catch (e) {
+    searchResult = await searchEntitiesByVector(userQuery, 10);
+  } catch (e) {
     console.error("Error during search from AI prompt", e);
   }
-        // Flatten the array of arrays and remove duplicates based on 'name'
-        const uniqueResults = Array.from(
-          new Map(searchResult.flat().map((item) => [item?.name, item])).values(),
-        );  
+  // Flatten the array of arrays and remove duplicates based on 'name'
+  const uniqueResults = Array.from(
+    new Map(
+      searchResult.flat().map((item: EmbeddedData) => [item?.name, item])
+    ).values()
+  );
   return uniqueResults;
+};

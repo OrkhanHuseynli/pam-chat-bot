@@ -1,11 +1,5 @@
 'use client'
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { generateUUID } from '@/lib/utils';
-import { Main } from 'next/document';
-import { Chat } from '@/components/chat';
-import { DataStreamHandler } from '@/components/data-stream-handler';
-import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { Bot } from 'lucide-react';
 
 

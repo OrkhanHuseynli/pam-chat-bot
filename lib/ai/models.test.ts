@@ -1,11 +1,11 @@
-import { simulateReadableStream } from 'ai';
-import { MockLanguageModelV1 } from 'ai/test';
-import { getResponseChunksByPrompt } from '@/tests/prompts/utils';
+import { simulateReadableStream } from "ai";
+import { MockLanguageModelV1 } from "ai/test";
+import { getResponseChunksByPrompt } from "@/tests/prompts/utils";
 
 export const chatModel = new MockLanguageModelV1({
   doGenerate: async () => ({
     rawCall: { rawPrompt: null, rawSettings: {} },
-    finishReason: 'stop',
+    finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20 },
     text: `Hello, world!`,
   }),
@@ -22,7 +22,7 @@ export const chatModel = new MockLanguageModelV1({
 export const reasoningModel = new MockLanguageModelV1({
   doGenerate: async () => ({
     rawCall: { rawPrompt: null, rawSettings: {} },
-    finishReason: 'stop',
+    finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20 },
     text: `Hello, world!`,
   }),
@@ -39,7 +39,7 @@ export const reasoningModel = new MockLanguageModelV1({
 export const titleModel = new MockLanguageModelV1({
   doGenerate: async () => ({
     rawCall: { rawPrompt: null, rawSettings: {} },
-    finishReason: 'stop',
+    finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20 },
     text: `This is a test title`,
   }),
@@ -48,10 +48,10 @@ export const titleModel = new MockLanguageModelV1({
       chunkDelayInMs: 500,
       initialDelayInMs: 1000,
       chunks: [
-        { type: 'text-delta', textDelta: 'This is a test title' },
+        { type: "text-delta", textDelta: "This is a test title" },
         {
-          type: 'finish',
-          finishReason: 'stop',
+          type: "finish",
+          finishReason: "stop",
           logprobs: undefined,
           usage: { completionTokens: 10, promptTokens: 3 },
         },
@@ -64,7 +64,7 @@ export const titleModel = new MockLanguageModelV1({
 export const artifactModel = new MockLanguageModelV1({
   doGenerate: async () => ({
     rawCall: { rawPrompt: null, rawSettings: {} },
-    finishReason: 'stop',
+    finishReason: "stop",
     usage: { promptTokens: 10, completionTokens: 20 },
     text: `Hello, world!`,
   }),

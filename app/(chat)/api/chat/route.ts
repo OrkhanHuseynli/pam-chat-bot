@@ -35,12 +35,10 @@ import {
   type ResumableStreamContext,
 } from 'resumable-stream';
 import { after } from 'next/server';
-import type { Chat, dinosaurs } from '@/lib/db/schema';
+import type { Chat } from '@/lib/db/schema';
 import { differenceInSeconds } from 'date-fns';
 import { findRelevantContent } from '@/lib/ai/embeddings';
 import { z } from "zod";
-import { exec } from 'child_process';
-import { list } from '@vercel/blob';
 
 
 export const maxDuration = 60;

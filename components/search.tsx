@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { Command, CommandGroup, CommandInput, CommandList, CommandItem } from '@/components/ui/Command';
-import { useRef, useState } from 'react';
-import { DinosaurEntity } from '@/lib/db/seedData';
-import { DinosaurDataTable } from './ui/DataTable/DinosaurDataTable';
-import { AddButton } from './ui/AddButton';
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandList,
+  CommandItem,
+} from "@/components/ui/Command";
+import { useRef, useState } from "react";
+import { IEmbeddedEntity } from "@/lib/db/seedData";
+import { SearchDataTable } from "./ui/DataTable/SearchDataTable";
+import { AddButton } from "./ui/AddButton";
 
 const DEBOUNCE_TIME = 350;
 
@@ -19,20 +25,19 @@ export function debounce(func: Function, delay: number) {
   };
 }
 
-
-export type selectedType = Map<string, DinosaurEntity>;
+export type selectedType = Map<string, IEmbeddedEntity>;
 type selectedTypeMap = Map<string, selectedType>;
 
 export default function Search() {
-  const [data, setData] = useState<DinosaurEntity[]>([]);
+  const [data, setData] = useState<IEmbeddedEntity[]>([]);
   const inputRef = useRef(null);
-  const [selected, setSelected] = useState<selectedType>(new Map<string, DinosaurEntity>());
-  const [groupName, setGroupName] = useState('');
-  const [groups, setGroups] = useState<selectedTypeMap>(new Map<string, Map<string, DinosaurEntity>>());
+  const [selected, setSelected] = useState<selectedType>(
+    new Map<string, IEmbeddedEntity>()
+  );
 
-  const onSelectEvent = (dino: DinosaurEntity) => {
+  const onSelectEvent = (entity: IEmbeddedEntity) => {
     // const current: any = inputRef.current;
-    selected.set(dino.id, dino);
+    selected.set(entity.id, entity);
     setSelected(new Map(selected));
   };
 
@@ -55,27 +60,35 @@ export default function Search() {
 
   return (
     <>
-      <div className='col-span-2 border-1 border-gray-400 bg-neutral px-3 py-2'>
-        <div className='flex items-center'>
-          <Command className='border-1 border-gray-400' filter={() => 1}>
+      <div className="col-span-2 border-1 border-gray-400 bg-neutral px-3 py-2">
+        <div className="flex items-center">
+          <Command className="border-1 border-gray-400" filter={() => 1}>
             <CommandInput
               ref={inputRef}
-              placeholder='Search for colleagues'
-              className='h-[56px] text-lg'
+              placeholder="Search for colleagues"
+              className="h-[56px] text-lg"
               onValueChange={(text) => {
                 debounceSearch(text);
               }}
             />
             <CommandGroup>
-              <CommandList className=''>
-                <CommandListGroup items={data} onSelectEvent={onSelectEvent} selectedItems={selected} />
+              <CommandList className="">
+                <CommandListGroup
+                  items={data}
+                  onSelectEvent={onSelectEvent}
+                  selectedItems={selected}
+                />
               </CommandList>
             </CommandGroup>
           </Command>
         </div>
       </div>
       <br />
-      <DinosaurDataTable title='Dinosaurs' selected={selected} setSelected={setSelected} />
+      <SearchDataTable
+        title="Dinosaurs"
+        selected={selected}
+        setSelected={setSelected}
+      />
     </>
   );
 }
@@ -83,33 +96,38 @@ export default function Search() {
 function CommandListGroup({
   items,
   selectedItems,
-  onSelectEvent
+  onSelectEvent,
 }: {
-  items: DinosaurEntity[];
-  onSelectEvent: (items: DinosaurEntity) => void;
+  items: IEmbeddedEntity[];
+  onSelectEvent: (items: IEmbeddedEntity) => void;
   selectedItems: selectedType;
 }) {
-  const list = items.map((item: DinosaurEntity) => {
+  const list = items.map((item: IEmbeddedEntity) => {
     const alreadySelected = selectedItems.has(item.id);
     return (
       <CommandItem
         key={item.id}
         value={item.name}
-        className='w-full justify-between'
+        className="w-full justify-between"
       >
-        <div className='font-mcKinsey capitalize'>
-          <strong>{item.name}</strong> <span className='text-gray-600'>{item.habitat}</span>
+        <div className="font-mcKinsey capitalize">
+          <strong>{item.name}</strong>{" "}
+          <span className="text-gray-600">{item.shortDescription}</span>
         </div>
         <AddButton
-          size='lg'
-          variant={alreadySelected ? 'outline-success' : 'outline'}
+          size="lg"
+          variant={alreadySelected ? "outline-success" : "outline"}
           onClick={() => {
             if (!alreadySelected) {
               onSelectEvent(item);
             }
           }}
         >
-          {alreadySelected ? <span className='mx-1'>Added</span> : <span className='mx-[9px]'>Add</span>}
+          {alreadySelected ? (
+            <span className="mx-1">Added</span>
+          ) : (
+            <span className="mx-[9px]">Add</span>
+          )}
         </AddButton>
       </CommandItem>
     );

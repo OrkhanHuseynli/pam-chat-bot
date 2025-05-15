@@ -1,5 +1,5 @@
 {
-  "id": "be7be3d5-2ef4-4f12-baa5-f9d05a8a2a70",
+  "id": "6b4742a4-493b-4a47-b77c-6bb2967463ba",
   "prevId": "80689542-2eaf-490c-a0d3-2324d003aa2a",
   "version": "7",
   "dialect": "postgresql",
@@ -63,88 +63,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.Dinosaurs": {
-      "name": "Dinosaurs",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "diet": {
-          "name": "diet",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "habitat": {
-          "name": "habitat",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "image": {
-          "name": "image",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "embedding": {
-          "name": "embedding",
-          "type": "vector(1536)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "embeddingIndex": {
-          "name": "embeddingIndex",
-          "columns": [
-            {
-              "expression": "embedding",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last",
-              "opclass": "vector_cosine_ops"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "hnsw",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -216,6 +134,76 @@
           ]
         }
       },
+      "uniqueConstraints": {}
+    },
+    "public.EmbeddedItems": {
+      "name": "EmbeddedItems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shortDescription": {
+          "name": "shortDescription",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(1536)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "embeddingIndex": {
+          "name": "embeddingIndex",
+          "columns": [
+            {
+              "expression": "embedding",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "vector_cosine_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "hnsw",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "public.Message_v2": {

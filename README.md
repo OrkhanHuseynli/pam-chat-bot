@@ -1,5 +1,5 @@
 <a href="https://chat.vercel.ai/">
-  <img alt="Next.js + RAG + AI chatbot." src="docs/main_page.png">
+  <img alt="Next.js + RAG + AI chatbot." src="docs/main_page_image.png">
   <h1 align="center">PAM AI Chat bot</h1>
 </a>
 

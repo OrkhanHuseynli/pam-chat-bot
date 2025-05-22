@@ -154,7 +154,7 @@ export async function POST(request: Request) {
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
 
-     let stream = createDataStream({
+     const stream = createDataStream({
       execute: (dataStream) => {
 
         let result = null;
@@ -256,10 +256,6 @@ function createStreamTextForChat(selectedChatModel: string, requestHints: Reques
       functionId: 'stream-text',
     },
   });
-}
-
-function naiveRugText(){
-
 }
 
 function createStreamTextForRag(selectedChatModel: string, messages: any[], message: any, id: string, session: any, dataStream: any) {

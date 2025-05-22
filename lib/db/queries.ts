@@ -159,6 +159,7 @@ export async function saveChat({
     });
   } catch (error) {
     console.error("Failed to save chat in database");
+    console.log(error);
     throw error;
   }
 }
@@ -282,7 +283,7 @@ export async function getChatsByUserIdAndChatType({
       const [selectedChat] = await db
         .select()
         .from(chat)
-        .where(eq(chat.id, startingAfter), eq(chat.type, chatType))
+        .where(eq(chat.id, startingAfter))
         .limit(1);
 
       if (!selectedChat) {
@@ -294,7 +295,7 @@ export async function getChatsByUserIdAndChatType({
       const [selectedChat] = await db
         .select()
         .from(chat)
-        .where(eq(chat.id, endingBefore), eq(chat.type, chatType))
+        .where(eq(chat.id, endingBefore))
         .limit(1);
 
       if (!selectedChat) {

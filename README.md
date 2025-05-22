@@ -45,6 +45,12 @@ This is data is necessary for the RAG example and Vector Search
 pnpm seed
 ```
 
+### Observe your DB in Drizzle Studio
+
+```bash
+pnpm db:studio
+```
+
 ### Customizing Seed Data
 
 You can replace the [seed data](./lib/db/seedData.ts) with your own content. Just ensure that your data conforms to the [IEmbeddedEntity](./lib/db/models.ts) interface. This way, no UI changes will be required when using your custom data.
@@ -56,6 +62,8 @@ pnpm dev
 ```
 
 Your app template should now be running on [localhost:3000](http://localhost:3000).
+
+NOTE: [Login](http://localhost:3000/login) to you app first http://localhost:3000/login
 
 ### Reference docs for the tech stack
 

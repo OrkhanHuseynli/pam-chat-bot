@@ -1,11 +1,11 @@
 import { auth } from '@/app/(auth)/auth';
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { getChatsByUserIdAndChatType } from '@/lib/db/queries';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
-  const limit = parseInt(searchParams.get('limit') || '10');
+  const limit = Number.parseInt(searchParams.get('limit') || '10');
   const startingAfter = searchParams.get('starting_after');
   const endingBefore = searchParams.get('ending_before');
   let chatType = searchParams.get('type');
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   if(chatType === null || (chatType !== 'chat' && chatType !== 'rag')) {
     chatType = 'chat';
   }
-  let chatTypeParam: 'chat' | 'rag' = chatType as 'chat' | 'rag';
+  const chatTypeParam: 'chat' | 'rag' = chatType as 'chat' | 'rag';
 
   if (startingAfter && endingBefore) {
     return Response.json(

@@ -35,7 +35,6 @@ import type { ArtifactKind } from "@/components/artifact";
 import { generateUUID } from "../utils";
 import { generateHashedPassword } from "./utils";
 import type { VisibilityType } from "@/components/visibility-selector";
-import type { IEmbeddedEntity } from "./seedData";
 import { embed } from "ai";
 import { openai } from "../ai/providers";
 
@@ -88,36 +87,6 @@ export async function searchEntitiesByVector(query: string, limit: number) {
     .orderBy((t) => desc(t.similarity))
     .limit(limit);
   return similarEntities;
-}
-
-export async function createEmbededEntity(entity: IEmbeddedEntity) {
-  const id = generateUUID();
-  try {
-    return await db
-      .insert(embeddedItems)
-      .values({ ...entity, id, createdAt: new Date(), updatedAt: new Date() });
-  } catch (error) {
-    console.error("Failed to create an embeddedEntity in database");
-    throw error;
-  }
-}
-
-export async function createEmbeddedEntities(
-  embeddedEntities: IEmbeddedEntity[]
-) {
-  try {
-    return await db.insert(embeddedItems).values(
-      embeddedEntities.map((entity) => ({
-        ...entity,
-        id: generateUUID(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
-    );
-  } catch (error) {
-    console.error("Failed to create user in database");
-    throw error;
-  }
 }
 
 export async function createGuestUser() {

@@ -1,5 +1,4 @@
-import { metadata } from "@/app/layout";
-import { embed } from "ai";
+
 import type { InferSelectModel } from "drizzle-orm";
 import {
   pgTable,
@@ -185,12 +184,12 @@ export const embeddedItems = pgTable(
     createdAt: timestamp("createdAt").notNull(),
     updatedAt: timestamp("updatedAt").notNull(),
   },
-  (table) => [
-    index("embeddingIndex").using(
+  (table) => ({
+    embeddingIndex: index("embeddingIndex").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-  ]
+  })
 );
 
 export type EmbeddedData = InferSelectModel<typeof embeddedItems>;

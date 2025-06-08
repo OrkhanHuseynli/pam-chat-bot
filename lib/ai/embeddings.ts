@@ -1,6 +1,5 @@
 import { embed, embedMany } from "ai";
 import { openai } from "./providers";
-import type { IMetadata, IEmbeddedEntity } from "../db/models";
 import { searchEntitiesByVector } from "../db/queries";
 import type { EmbeddedData } from "../db/schema";
 
@@ -12,49 +11,6 @@ const generateChunks = (input: string): string[] => {
     .split(".")
     .filter((i) => i !== "");
 };
-
-export async function embedDino(dino: IMetadata): Promise<number[]> {
-  const json = JSON.stringify(dino);
-  const { embedding } = await embed({
-    model: embeddingModel,
-    value: json,
-  });
-  return embedding;
-}
-export async function embedManyDino(dinos: IMetadata[]): Promise<number[][]> {
-  const jsons = dinos.map((dino) => JSON.stringify(dino));
-  const { embeddings } = await embedMany({
-    model: embeddingModel,
-    values: jsons,
-  });
-  return embeddings;
-}
-
-export async function embedDinoWithMetadata(
-  dino: IMetadata
-): Promise<IEmbeddedEntity> {
-  const json = JSON.stringify(dino);
-  const { embedding } = await embed({
-    model: embeddingModel,
-    value: json,
-  });
-  return { embedding, ...dino, id: dino.name };
-}
-
-export async function embedManyDinoWithMetadata(
-  dinos: IMetadata[]
-): Promise<IEmbeddedEntity[]> {
-  const jsons = dinos.map((dino) => JSON.stringify(dino));
-  const { embeddings } = await embedMany({
-    model: embeddingModel,
-    values: jsons,
-  });
-  return embeddings.map((embedding, i) => ({
-    ...dinos[i],
-    id: dinos[i].name,
-    embedding,
-  }));
-}
 
 export const generateEmbeddings = async (
   value: string

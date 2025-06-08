@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 import type { IEmbeddedEntity } from "@/lib/db/models";
 import { SearchDataTable } from "./ui/DataTable/SearchDataTable";
 import { AddButton } from "./ui/AddButton";
+import { SearchHeader } from "./search-header";
 
 const DEBOUNCE_TIME = 350;
 

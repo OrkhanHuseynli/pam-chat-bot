@@ -1,6 +1,5 @@
 import {
   customProvider,
-  embed,
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';

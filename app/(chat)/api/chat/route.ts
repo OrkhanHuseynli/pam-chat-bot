@@ -4,11 +4,11 @@ import {
   createDataStream,
   smoothStream,
   streamText,
-  tool, 
-  generateObject
-} from 'ai';
-import { auth, type UserType } from '@/app/(auth)/auth';
-import { type RequestHints, systemPrompt } from '@/lib/ai/prompts';
+  tool,
+  generateObject,
+} from "ai";
+import { auth, type UserType } from "@/app/(auth)/auth";
+import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import {
   createStreamId,
   deleteChatById,
@@ -18,28 +18,27 @@ import {
   getStreamIdsByChatId,
   saveChat,
   saveMessages,
-} from '@/lib/db/queries';
-import { generateUUID, getTrailingMessageId } from '@/lib/utils';
-import { generateTitleFromUserMessage } from '../../actions';
-import { createDocument } from '@/lib/ai/tools/create-document';
-import { updateDocument } from '@/lib/ai/tools/update-document';
-import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
-import { getWeather } from '@/lib/ai/tools/get-weather';
-import { isProductionEnvironment } from '@/lib/constants';
-import { myProvider } from '@/lib/ai/providers';
-import { entitlementsByUserType } from '@/lib/ai/entitlements';
-import { postRequestBodySchema, type PostRequestBody } from './schema';
-import { geolocation } from '@vercel/functions';
+} from "@/lib/db/queries";
+import { generateUUID, getTrailingMessageId } from "@/lib/utils";
+import { generateTitleFromUserMessage } from "../../actions";
+import { createDocument } from "@/lib/ai/tools/create-document";
+import { updateDocument } from "@/lib/ai/tools/update-document";
+import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
+import { getWeather } from "@/lib/ai/tools/get-weather";
+import { isProductionEnvironment } from "@/lib/constants";
+import { myProvider } from "@/lib/ai/providers";
+import { entitlementsByUserType } from "@/lib/ai/entitlements";
+import { postRequestBodySchema, type PostRequestBody } from "./schema";
+import { geolocation } from "@vercel/functions";
 import {
   createResumableStreamContext,
   type ResumableStreamContext,
-} from 'resumable-stream';
-import { after } from 'next/server';
-import type { Chat } from '@/lib/db/schema';
-import { differenceInSeconds } from 'date-fns';
-import { findRelevantContent } from '@/lib/ai/embeddings';
+} from "resumable-stream";
+import { after } from "next/server";
+import type { Chat } from "@/lib/db/schema";
+import { differenceInSeconds } from "date-fns";
+import { findRelevantContent } from "@/lib/ai/embeddings";
 import { z } from "zod";
-
 
 export const maxDuration = 60;
 
@@ -52,9 +51,9 @@ function getStreamContext() {
         waitUntil: after,
       });
     } catch (error: any) {
-      if (error.message.includes('REDIS_URL')) {
+      if (error.message.includes("REDIS_URL")) {
         console.log(
-          ' > Resumable streams are disabled due to missing REDIS_URL',
+          " > Resumable streams are disabled due to missing REDIS_URL"
         );
       } else {
         console.error(error);
@@ -72,7 +71,7 @@ export async function POST(request: Request) {
     const json = await request.json();
     requestBody = postRequestBodySchema.parse(json);
   } catch (_) {
-    return new Response('Invalid request body', { status: 400 });
+    return new Response("Invalid request body", { status: 400 });
   }
 
   try {
@@ -81,7 +80,7 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user) {
-      return new Response('Unauthorized', { status: 401 });
+      return new Response("Unauthorized", { status: 401 });
     }
 
     const userType: UserType = session.user.type;
@@ -93,10 +92,10 @@ export async function POST(request: Request) {
 
     if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
       return new Response(
-        'You have exceeded your maximum number of messages for the day! Please try again later.',
+        "You have exceeded your maximum number of messages for the day! Please try again later.",
         {
           status: 429,
-        },
+        }
       );
     }
 
@@ -109,14 +108,14 @@ export async function POST(request: Request) {
 
       await saveChat({
         id,
-        type: type==='rag'?'rag':'chat',
+        type: type === "rag" ? "rag" : "chat",
         userId: session.user.id,
         title,
         visibility: selectedVisibilityType,
       });
     } else {
       if (chat.userId !== session.user.id) {
-        return new Response('Forbidden', { status: 403 });
+        return new Response("Forbidden", { status: 403 });
       }
     }
 
@@ -142,7 +141,7 @@ export async function POST(request: Request) {
         {
           chatId: id,
           id: message.id,
-          role: 'user',
+          role: "user",
           parts: message.parts,
           attachments: message.experimental_attachments ?? [],
           createdAt: new Date(),
@@ -150,18 +149,32 @@ export async function POST(request: Request) {
       ],
     });
 
-    // let stream = null 
+    // let stream = null
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
 
-     const stream = createDataStream({
+    const stream = createDataStream({
       execute: (dataStream) => {
-
         let result = null;
-        if(type === 'rag') {
-          result = createStreamTextForRag(selectedChatModel, messages, message, id, session, dataStream);
+        if (type === "rag") {
+          result = createStreamTextForRag(
+            selectedChatModel,
+            messages,
+            message,
+            id,
+            session,
+            dataStream
+          );
         } else {
-         result = createStreamTextForChat(selectedChatModel, requestHints, messages, session, dataStream, message, id);
+          result = createStreamTextForChat(
+            selectedChatModel,
+            requestHints,
+            messages,
+            session,
+            dataStream,
+            message,
+            id
+          );
         }
         result.consumeStream();
 
@@ -170,42 +183,63 @@ export async function POST(request: Request) {
         });
       },
       onError: () => {
-        return 'Oops, an error occurred!';
+        return "Oops, an error occurred!";
       },
     });
-    
 
     const streamContext = getStreamContext();
 
     if (streamContext) {
       return new Response(
-        await streamContext.resumableStream(streamId, () => stream),
+        await streamContext.resumableStream(streamId, () => stream)
       );
     } else {
       return new Response(stream);
     }
   } catch (_) {
-    return new Response('An error occurred while processing your request!', {
+    return new Response("An error occurred while processing your request!", {
       status: 500,
     });
   }
 }
 
-function createStreamTextForChat(selectedChatModel: string, requestHints: RequestHints, messages:any, session:any, dataStream:any, message: { id: string; createdAt: Date; content: string; role: "user"; parts: { type: "text"; text: string; }[]; experimental_attachments?: { name: string; url: string; contentType: "image/png" | "image/jpg" | "image/jpeg"; }[] | undefined; }, id: string) {
+function createStreamTextForChat(
+  selectedChatModel: string,
+  requestHints: RequestHints,
+  messages: any,
+  session: any,
+  dataStream: any,
+  message: {
+    id: string;
+    createdAt: Date;
+    content: string;
+    role: "user";
+    parts: { type: "text"; text: string }[];
+    experimental_attachments?:
+      | {
+          name: string;
+          url: string;
+          contentType: "image/png" | "image/jpg" | "image/jpeg";
+        }[]
+      | undefined;
+  },
+  id: string
+) {
   return streamText({
     model: myProvider.languageModel(selectedChatModel),
     system: systemPrompt({ selectedChatModel, requestHints }),
     messages,
     maxSteps: 5,
-    experimental_activeTools: selectedChatModel === 'chat-model-reasoning'
-      ? []
-      : [
-        'getWeather',
-        'createDocument',
-        'updateDocument',
-        'requestSuggestions',
-      ],
-    experimental_transform: smoothStream({ chunking: 'word' }),
+    experimental_activeTools:
+      selectedChatModel === "chat-model-reasoning"
+        ? []
+        : [
+            "getWeather",
+            "createDocument",
+            "updateDocument",
+            "requestSuggestions",
+          ],
+    experimental_transform: smoothStream({ chunking: "word" }),
     experimental_generateMessageId: generateUUID,
     tools: {
       getWeather,
@@ -221,12 +255,12 @@ function createStreamTextForChat(selectedChatModel: string, requestHints: Reques
         try {
           const assistantId = getTrailingMessageId({
             messages: response.messages.filter(
-              (message) => message.role === 'assistant'
+              (message) => message.role === "assistant"
             ),
           });
 
           if (!assistantId) {
-            throw new Error('No assistant message found!');
+            throw new Error("No assistant message found!");
           }
 
           const [, assistantMessage] = appendResponseMessages({
@@ -247,18 +281,25 @@ function createStreamTextForChat(selectedChatModel: string, requestHints: Reques
             ],
           });
         } catch (_) {
-          console.error('Failed to save chat');
+          console.error("Failed to save chat");
         }
       }
     },
     experimental_telemetry: {
       isEnabled: isProductionEnvironment,
-      functionId: 'stream-text',
+      functionId: "stream-text",
     },
   });
 }
 
-function createStreamTextForRag(selectedChatModel: string, messages: any[], message: any, id: string, session: any, dataStream: any) {
+function createStreamTextForRag(
+  selectedChatModel: string,
+  messages: any[],
+  message: any,
+  id: string,
+  session: any,
+  dataStream: any
+) {
   const result = streamText({
     model: myProvider.languageModel(selectedChatModel),
     messages,
@@ -277,13 +318,11 @@ function createStreamTextForRag(selectedChatModel: string, messages: any[], mess
     Don't respond to any questions that are not related to dinosaurs and are not from your knowledge base. If user asks a question that is not related to dinosaurs, respond with "I am a dinosaur assistant. I can only answer questions about dinosaurs. Please ask me a question about dinosaurs.".
 `,
     maxSteps: 5,
-    experimental_activeTools: selectedChatModel === 'chat-model-reasoning'
-    ? []
-    : [
-      'getInformation',
-      'understandQuery',
-    ],
-    experimental_transform: smoothStream({ chunking: 'word' }),
+    experimental_activeTools:
+      selectedChatModel === "chat-model-reasoning"
+        ? []
+        : ["getInformation", "understandQuery"],
+    experimental_transform: smoothStream({ chunking: "word" }),
     experimental_generateMessageId: generateUUID,
     tools: {
       understandQuery: tool({
@@ -293,7 +332,7 @@ function createStreamTextForRag(selectedChatModel: string, messages: any[], mess
           toolsToCallInOrder: z
             .array(z.string())
             .describe(
-              "these are the tools you need to call in the order necessary to respond to the users query",
+              "these are the tools you need to call in the order necessary to respond to the users query"
             ),
         }),
         execute: async ({ query }) => {
@@ -322,14 +361,16 @@ function createStreamTextForRag(selectedChatModel: string, messages: any[], mess
         execute: async ({ similarQuestions, question }) => {
           const results = await Promise.all(
             similarQuestions.map(
-              async (question) => await findRelevantContent(question),
-            ),
+              async (question) => await findRelevantContent(question)
+            )
           );
-              // Flatten the array of arrays and remove duplicates based on 'name'
-              const uniqueResults = Array.from(
-                new Map(results.flat().map((item) => [item?.name, item])).values(),
-              );
-              return uniqueResults;
+          // Flatten the array of arrays and remove duplicates based on 'name'
+          const uniqueResults = Array.from(
+            new Map(
+              results.flat().map((item: any) => [item?.name, item])
+            ).values()
+          );
+          return uniqueResults;
         },
       }),
     },
@@ -338,12 +379,12 @@ function createStreamTextForRag(selectedChatModel: string, messages: any[], mess
         try {
           const assistantId = getTrailingMessageId({
             messages: response.messages.filter(
-              (message) => message.role === 'assistant'
+              (message) => message.role === "assistant"
             ),
           });
 
           if (!assistantId) {
-            throw new Error('No assistant message found!');
+            throw new Error("No assistant message found!");
           }
           const [, assistantMessage] = appendResponseMessages({
             messages: [message],
@@ -363,13 +404,13 @@ function createStreamTextForRag(selectedChatModel: string, messages: any[], mess
             ],
           });
         } catch (_) {
-          console.error('Failed to save chat');
+          console.error("Failed to save chat");
         }
       }
     },
     experimental_telemetry: {
       isEnabled: isProductionEnvironment,
-      functionId: 'stream-text',
+      functionId: "stream-text",
     },
   });
 
@@ -385,16 +426,16 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const chatId = searchParams.get('chatId');
+  const chatId = searchParams.get("chatId");
 
   if (!chatId) {
-    return new Response('id is required', { status: 400 });
+    return new Response("id is required", { status: 400 });
   }
 
   const session = await auth();
 
   if (!session?.user) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response("Unauthorized", { status: 401 });
   }
 
   let chat: Chat;
@@ -402,27 +443,27 @@ export async function GET(request: Request) {
   try {
     chat = await getChatById({ id: chatId });
   } catch {
-    return new Response('Not found', { status: 404 });
+    return new Response("Not found", { status: 404 });
   }
 
   if (!chat) {
-    return new Response('Not found', { status: 404 });
+    return new Response("Not found", { status: 404 });
   }
 
-  if (chat.visibility === 'private' && chat.userId !== session.user.id) {
-    return new Response('Forbidden', { status: 403 });
+  if (chat.visibility === "private" && chat.userId !== session.user.id) {
+    return new Response("Forbidden", { status: 403 });
   }
 
   const streamIds = await getStreamIdsByChatId({ chatId });
 
   if (!streamIds.length) {
-    return new Response('No streams found', { status: 404 });
+    return new Response("No streams found", { status: 404 });
   }
 
   const recentStreamId = streamIds.at(-1);
 
   if (!recentStreamId) {
-    return new Response('No recent stream found', { status: 404 });
+    return new Response("No recent stream found", { status: 404 });
   }
 
   const emptyDataStream = createDataStream({
@@ -431,7 +472,7 @@ export async function GET(request: Request) {
 
   const stream = await streamContext.resumableStream(
     recentStreamId,
-    () => emptyDataStream,
+    () => emptyDataStream
   );
 
   /*
@@ -446,7 +487,7 @@ export async function GET(request: Request) {
       return new Response(emptyDataStream, { status: 200 });
     }
 
-    if (mostRecentMessage.role !== 'assistant') {
+    if (mostRecentMessage.role !== "assistant") {
       return new Response(emptyDataStream, { status: 200 });
     }
 
@@ -459,7 +500,7 @@ export async function GET(request: Request) {
     const restoredStream = createDataStream({
       execute: (buffer) => {
         buffer.writeData({
-          type: 'append-message',
+          type: "append-message",
           message: JSON.stringify(mostRecentMessage),
         });
       },
@@ -473,23 +514,23 @@ export async function GET(request: Request) {
 
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
+  const id = searchParams.get("id");
 
   if (!id) {
-    return new Response('Not Found', { status: 404 });
+    return new Response("Not Found", { status: 404 });
   }
 
   const session = await auth();
 
   if (!session?.user?.id) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response("Unauthorized", { status: 401 });
   }
 
   try {
     const chat = await getChatById({ id });
 
     if (chat.userId !== session.user.id) {
-      return new Response('Forbidden', { status: 403 });
+      return new Response("Forbidden", { status: 403 });
     }
 
     const deletedChat = await deleteChatById({ id });
@@ -497,7 +538,7 @@ export async function DELETE(request: Request) {
     return Response.json(deletedChat, { status: 200 });
   } catch (error) {
     console.error(error);
-    return new Response('An error occurred while processing your request!', {
+    return new Response("An error occurred while processing your request!", {
       status: 500,
     });
   }

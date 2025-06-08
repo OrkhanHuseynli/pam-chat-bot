@@ -111,7 +111,7 @@ export const getColumns = (
             type="button"
             className="flex w-[80px] flex-row"
             onClick={() => {
-              const id = row.getValue("id");
+              const id:string = row.getValue("id");
               if (id) {
                 selected.delete(id);
                 console.log(selected);

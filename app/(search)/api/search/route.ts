@@ -1,11 +1,11 @@
 import { searchEntitiesByVector } from "@/lib/db/queries";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextResponse) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const text = searchParams.get("text") as string;
   console.log("search text : ", text);
-  const result = {
+  const result: any = {
     data: [],
     error: null,
   };

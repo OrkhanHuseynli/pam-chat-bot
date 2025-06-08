@@ -79,7 +79,7 @@ const groupChatsByDate = (chats: Chat[]): GroupedChats => {
 export function getChatHistoryPaginationKey(
   pageIndex: number,
   previousPageData: ChatHistory,
-  chatType:string = 'chat'
+  chatType = 'chat'
 ) {
   if (previousPageData && previousPageData.hasMore === false) {
     return null;

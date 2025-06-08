@@ -1,7 +1,9 @@
 <a href="https://chat.vercel.ai/">
   <img alt="Next.js + RAG + AI chatbot." src="docs/main_page_image.png">
-  <h1 align="center">PAM AI Chat bot</h1>
+  <h1 align="center">PAM AI Chat bot</h1> 
 </a>
+
+<a href="https://vercel.com/new/clone?repository-url=https://github.com/OrkhanHuseynli/pam-chat-bot.git"><img src="https://vercel.com/button" alt="Deploy with Vercel"/></a>
 
 <p align="center">
    This template is based on NextJS Chat SDK, a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
